@@ -51,6 +51,7 @@ CHECKSUM_INIT = 0xEF
 
 chk_sum = CHECKSUM_INIT
 blocks = 0
+PY3 = sys.version_info[0] == 3
 
 def write_file(file_name,data):
     if file_name is None:
@@ -90,8 +91,11 @@ def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
                 data_bin = fp.read(data_len)
                 write_file(dest_file_name,data_bin)
                 if need_chk:
-                    for loop in range(len(data_bin)):
-                        chk_sum ^= ord(data_bin[loop])
+                    for byte_val in data_bin:
+                        if PY3:
+                            chk_sum ^= byte_val
+                        else:
+                            chk_sum ^= ord(byte_val)
                 # print '%s size is %d(0x%x),align 4 bytes,\nultimate size is %d(0x%x)'%(file_name,data_len,data_len,tmp_len,tmp_len)
                 tmp_len = tmp_len - data_len
                 if tmp_len:
@@ -99,8 +103,11 @@ def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
                     data_bin = binascii.a2b_hex(''.join(data_str))
                     write_file(dest_file_name,data_bin)
                     if need_chk:
-                        for loop in range(len(data_bin)):
-                            chk_sum ^= ord(data_bin[loop])
+                        for byte_val in data_bin:
+                            if PY3:
+                                chk_sum ^= byte_val
+                            else:
+                                chk_sum ^= ord(byte_val)
                 blocks = blocks + 1
                 fp.close()
         else:
@@ -256,7 +263,7 @@ def gen_appbin():
         data_str = ['00']*(sum_size)
         data_bin = binascii.a2b_hex(''.join(data_str))
         write_file(flash_bin_name,data_bin)
-    write_file(flash_bin_name,chr(chk_sum & 0xFF))
+    write_file(flash_bin_name,bytearray([chk_sum & 0xFF]))
 
     if boot_mode == '1':
         sum_size = os.path.getsize(flash_bin_name)
@@ -280,7 +287,19 @@ def gen_appbin():
         else :
             all_bin_crc = abs(all_bin_crc) + 1
         print(all_bin_crc)
-        write_file(flash_bin_name,chr((all_bin_crc & 0x000000FF))+chr((all_bin_crc & 0x0000FF00) >> 8)+chr((all_bin_crc & 0x00FF0000) >> 16)+chr((all_bin_crc & 0xFF000000) >> 24))
+        if PY3:
+            data = bytes([
+                all_bin_crc & 0xFF,
+                (all_bin_crc >> 8) & 0xFF,
+                (all_bin_crc >> 16) & 0xFF,
+                (all_bin_crc >> 24) & 0xFF
+            ])
+        else:
+            data = chr(all_bin_crc & 0xFF) + \
+                   chr((all_bin_crc >> 8) & 0xFF) + \
+                   chr((all_bin_crc >> 16) & 0xFF) + \
+                   chr((all_bin_crc >> 24) & 0xFF)
+        write_file(flash_bin_name,data)
     cmd = 'rm eagle.app.sym'
     os.system(cmd)
 

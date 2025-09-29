@@ -40,6 +40,7 @@ CHECKSUM_INIT = 0xEF
 
 chk_sum = CHECKSUM_INIT
 blocks = 0
+PY3 = sys.version_info[0] == 3
 
 def write_file(file_name,data):
 	if file_name is None:
@@ -79,8 +80,12 @@ def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
                 data_bin = fp.read(data_len)
                 write_file(dest_file_name,data_bin)
                 if need_chk:
-                    for loop in range(len(data_bin)):
-                        chk_sum ^= ord(data_bin[loop])
+                    if need_chk:
+                        for byte_val in data_bin:
+                            if PY3:
+                                chk_sum ^= byte_val
+                            else:
+                                chk_sum ^= ord(byte_val)
                 print('%s size is %d(0x%x),align 4 bytes,\nultimate size is %d(0x%x)'%(file_name,data_len,data_len,tmp_len,tmp_len))
                 tmp_len = tmp_len - data_len
                 if tmp_len:
@@ -88,8 +93,11 @@ def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
                     data_bin = binascii.a2b_hex(''.join(data_str))
                     write_file(dest_file_name,data_bin)
                     if need_chk:
-                        for loop in range(len(data_bin)):
-                            chk_sum ^= ord(data_bin[loop])
+                        for byte_val in data_bin:
+                            if PY3:
+                                chk_sum ^= byte_val
+                            else:
+                                chk_sum ^= ord(byte_val)
                 blocks = blocks + 1
                 fp.close()
         else:
@@ -189,7 +197,7 @@ def gen_appbin():
         data_str = ['00']*(sum_size)
         data_bin = binascii.a2b_hex(''.join(data_str))
         write_file(flash_bin_name,data_bin)
-    write_file(flash_bin_name,chr(chk_sum & 0xFF))
+    write_file(flash_bin_name,bytearray([chk_sum & 0xFF]))
     	
     if mode == '1':
         sum_size = os.path.getsize(flash_bin_name)
