@@ -225,17 +225,17 @@ def gen_appbin():
     app=int(user_bin)&0xff
     if boot_mode == '2':
         # write irom bin head
-        #data_bin = struct.pack('<BBBBI',BIN_MAGIC_IROM,4,byte2,byte3,long(entry_addr,16))
-        data_bin = struct.pack('<BBBBI',BIN_MAGIC_IROM,4,0,app,long(entry_addr,16))
+        #data_bin = struct.pack('<BBBBI',BIN_MAGIC_IROM,4,byte2,byte3,int(entry_addr,16))
+        data_bin = struct.pack('<BBBBI',BIN_MAGIC_IROM,4,0,app,int(entry_addr,16))
         sum_size = len(data_bin)
         write_file(flash_bin_name,data_bin)
         
         # irom0.text.bin
         combine_bin(irom0text_bin_name,flash_bin_name,0x0,0)
     if boot_mode == '1':
-         data_bin = struct.pack('<BBBBI',BIN_MAGIC_FLASH,3,0,app,long(entry_addr,16))
+         data_bin = struct.pack('<BBBBI',BIN_MAGIC_FLASH,3,0,app,int(entry_addr,16))
     else:
-         data_bin = struct.pack('<BBBBI',BIN_MAGIC_FLASH,3,byte2,byte3,long(entry_addr,16))
+         data_bin = struct.pack('<BBBBI',BIN_MAGIC_FLASH,3,byte2,byte3,int(entry_addr,16))
     sum_size = len(data_bin)
     write_file(flash_bin_name,data_bin)
 
@@ -244,10 +244,10 @@ def gen_appbin():
 
     # data.bin
     if data_start_addr:
-        combine_bin(data_bin_name,flash_bin_name,long(data_start_addr,16),1)
+        combine_bin(data_bin_name,flash_bin_name,int(data_start_addr,16),1)
 
     # rodata.bin
-    combine_bin(rodata_bin_name,flash_bin_name,long(rodata_start_addr,16),1)
+    combine_bin(rodata_bin_name,flash_bin_name,int(rodata_start_addr,16),1)
 
     # write checksum header
     sum_size = os.path.getsize(flash_bin_name) + 1

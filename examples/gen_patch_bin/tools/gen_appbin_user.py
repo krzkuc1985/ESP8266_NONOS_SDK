@@ -160,7 +160,7 @@ def gen_appbin():
     
     if mode == '2':
         # write irom bin head
-        data_bin = struct.pack('<BBHI',BIN_MAGIC_IROM,4,0,long(entry_addr,16))
+        data_bin = struct.pack('<BBHI',BIN_MAGIC_IROM,4,0,int(entry_addr,16))
         sum_size = len(data_bin)
         write_file(flash_bin_name,data_bin)
         
@@ -168,7 +168,7 @@ def gen_appbin():
         combine_bin(irom0text_bin_name,flash_bin_name,0x0,0)
 
     # write flash bin header
-    data_bin = struct.pack('<BBHI',BIN_MAGIC_FLASH,3,0,long(entry_addr,16))
+    data_bin = struct.pack('<BBHI',BIN_MAGIC_FLASH,3,0,int(entry_addr,16))
     sum_size = len(data_bin)
     write_file(flash_bin_name,data_bin)
 
@@ -177,10 +177,10 @@ def gen_appbin():
 
 	# data.bin
     if data_start_addr:
-        combine_bin(data_bin_name,flash_bin_name,long(data_start_addr,16),1)
+        combine_bin(data_bin_name,flash_bin_name,int(data_start_addr,16),1)
 
 	# rodata.bin
-    combine_bin(rodata_bin_name,flash_bin_name,long(rodata_start_addr,16),1)
+    combine_bin(rodata_bin_name,flash_bin_name,int(rodata_start_addr,16),1)
 
     # write checksum header
     sum_size = os.path.getsize(flash_bin_name) + 1
