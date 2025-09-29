@@ -65,35 +65,35 @@ def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
     if file_name:
         fp = open(file_name,'rb')
         if fp:
-        	########## write text ##########
+            ########## write text ##########
             fp.seek(0,os.SEEK_END)
             data_len = fp.tell()
             if data_len:
-		if need_chk:
+                if need_chk:
                     tmp_len = (data_len + 3) & (~3)
-		else:
-	            tmp_len = (data_len + 15) & (~15)
+                else:
+                    tmp_len = (data_len + 15) & (~15)
                 data_bin = struct.pack('<II',start_offset_addr,tmp_len)
                 write_file(dest_file_name,data_bin)
                 fp.seek(0,os.SEEK_SET)
                 data_bin = fp.read(data_len)
                 write_file(dest_file_name,data_bin)
-		if need_chk:
-		    for loop in range(len(data_bin)):
-		        chk_sum ^= ord(data_bin[loop])
+                if need_chk:
+                    for loop in range(len(data_bin)):
+                        chk_sum ^= ord(data_bin[loop])
                 print('%s size is %d(0x%x),align 4 bytes,\nultimate size is %d(0x%x)'%(file_name,data_len,data_len,tmp_len,tmp_len))
                 tmp_len = tmp_len - data_len
                 if tmp_len:
                     data_str = ['00']*(tmp_len)
                     data_bin = binascii.a2b_hex(''.join(data_str))
                     write_file(dest_file_name,data_bin)
-		    if need_chk:
-			for loop in range(len(data_bin)):
-			    chk_sum ^= ord(data_bin[loop])
+                    if need_chk:
+                        for loop in range(len(data_bin)):
+                            chk_sum ^= ord(data_bin[loop])
                 blocks = blocks + 1
-        	fp.close()
+                fp.close()
         else:
-        	print('!!!Open %s fail!!!'%(file_name))
+        	    print('!!!Open %s fail!!!'%(file_name))
 
 def gen_appbin():
     global chk_sum
@@ -204,7 +204,7 @@ def gen_appbin():
             fp.close()
         else :
             print('!!!Open %s fail!!!'%(flash_bin_name))
-    	    sys.exit(0)
+            sys.exit(0)
 
     cmd = 'rm eagle.app.sym'
     os.system(cmd)
