@@ -30,6 +30,8 @@
     argv[1] is elf file name
     argv[2] is version num"""
 
+from __future__ import print_function
+
 import string
 import sys
 import os

@@ -20,6 +20,8 @@
     argv[1] is elf file name
     argv[2] is version num"""
 
+from __future__ import print_function
+
 import string
 import sys
 import os
@@ -41,7 +43,7 @@ blocks = 0
 
 def write_file(file_name,data):
 	if file_name is None:
-		print 'file_name cannot be none\n'
+		print('file_name cannot be none\n')
 		sys.exit(0)
 
 	fp = open(file_name,'ab')
@@ -51,13 +53,13 @@ def write_file(file_name,data):
 		fp.write(data)
 		fp.close()
 	else:
-		print '%s write fail\n'%(file_name)
+		print('%s write fail\n'%(file_name))
 
 def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
     global chk_sum
     global blocks
     if dest_file_name is None:
-        print 'dest_file_name cannot be none\n'
+        print('dest_file_name cannot be none\n')
         sys.exit(0)
 
     if file_name:
@@ -79,7 +81,7 @@ def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
 		if need_chk:
 		    for loop in range(len(data_bin)):
 		        chk_sum ^= ord(data_bin[loop])
-                print '%s size is %d(0x%x),align 4 bytes,\nultimate size is %d(0x%x)'%(file_name,data_len,data_len,tmp_len,tmp_len)
+                print('%s size is %d(0x%x),align 4 bytes,\nultimate size is %d(0x%x)'%(file_name,data_len,data_len,tmp_len,tmp_len))
                 tmp_len = tmp_len - data_len
                 if tmp_len:
                     data_str = ['00']*(tmp_len)
@@ -91,13 +93,13 @@ def combine_bin(file_name,dest_file_name,start_offset_addr,need_chk):
                 blocks = blocks + 1
         	fp.close()
         else:
-        	print '!!!Open %s fail!!!'%(file_name)
+        	print('!!!Open %s fail!!!'%(file_name))
 
 def gen_appbin():
     global chk_sum
     global blocks
     if len(sys.argv) != 3:
-        print 'Usage: gen_appbin.py eagle.app.out mode'
+        print('Usage: gen_appbin.py eagle.app.out mode')
         sys.exit(0)
 
     elf_file = sys.argv[1]
@@ -122,7 +124,7 @@ def gen_appbin():
 
     fp = file('./eagle.app.sym')
     if fp is None:
-        print "open sym file error\n"
+        print("open sym file error\n")
         sys.exit(0)
 
     lines = fp.readlines()
@@ -134,10 +136,10 @@ def gen_appbin():
         m = p.search(line)
         if m != None:
             entry_addr = m.group(1)
-            print entry_addr
+            print(entry_addr)
 
     if entry_addr is None:
-        print 'no entry point!!'
+        print('no entry point!!')
         sys.exit(0)
 
     data_start_addr = '0'
@@ -146,7 +148,7 @@ def gen_appbin():
         m = p.search(line)
         if m != None:
             data_start_addr = m.group(1)
-            print data_start_addr
+            print(data_start_addr)
 
     rodata_start_addr = '0'
     p = re.compile('(\w*)(\sA\s)(_rodata_start)$')
@@ -154,7 +156,7 @@ def gen_appbin():
         m = p.search(line)
         if m != None:
             rodata_start_addr = m.group(1)
-            print rodata_start_addr
+            print(rodata_start_addr)
     
     if mode == '2':
         # write irom bin head
@@ -201,7 +203,7 @@ def gen_appbin():
             write_file(flash_bin_name,data_bin)
             fp.close()
         else :
-            print '!!!Open %s fail!!!'%(flash_bin_name)
+            print('!!!Open %s fail!!!'%(flash_bin_name))
     	    sys.exit(0)
 
     cmd = 'rm eagle.app.sym'

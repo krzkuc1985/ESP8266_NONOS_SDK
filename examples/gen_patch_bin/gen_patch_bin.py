@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 
 if os.path.exists("./patch_array.h"):
@@ -24,13 +26,13 @@ with open("bin/eagle.app.v6.flash.bin","r") as fd:
             Hex_Str += "0x"+(hex(ord(mystr[i])).replace('0x','').zfill(2)).upper()+ ","
             offset += 1
             if offset == 16:
-                print Hex_Str
+                print(Hex_Str)
                 patch_fd.write("    {}\r\n".format(Hex_Str))
                 Hex_Str = ""
                 offset = 0
         
         if Hex_Str != "":
-            print Hex_Str
+            print(Hex_Str)
             patch_fd.write("    {}\r\n".format(Hex_Str))
         patch_fd.write("};\r\n")
 
