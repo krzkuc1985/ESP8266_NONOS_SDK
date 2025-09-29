@@ -166,7 +166,7 @@ def gen_appbin():
     fp.close()
 
     entry_addr = None
-    p = re.compile('(\w*)(\sT\s)(call_user_start1)$')
+    p = re.compile('(\\w*)(\\sT\\s)(call_user_start1)$')
     for line in lines:
         m = p.search(line)
         if m != None:
@@ -178,7 +178,7 @@ def gen_appbin():
         sys.exit(0)
 
     data_start_addr = '0'
-    p = re.compile('(\w*)(\sA\s)(_data_start)$')
+    p = re.compile('(\\w*)(\\sA\\s)(_data_start)$')
     for line in lines:
         m = p.search(line)
         if m != None:
@@ -186,7 +186,7 @@ def gen_appbin():
             # print data_start_addr
 
     rodata_start_addr = '0'
-    p = re.compile('(\w*)(\sA\s)(_rodata_start)$')
+    p = re.compile('(\\w*)(\\sA\\s)(_rodata_start)$')
     for line in lines:
         m = p.search(line)
         if m != None:
