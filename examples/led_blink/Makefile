@@ -2,6 +2,7 @@
 # Required variables for each makefile
 # Discard this section from all parent makefiles
 # Expected variables (with automatic defaults):
+#   SDK_BASE - path to the root directory of the ESP8266 NONOS SDK
 #   CSRCS (all "C" files in the dir)
 #   SUBDIRS (all subdirs with a Makefile)
 #   GEN_LIBS - list of libs to be generated ()
@@ -15,6 +16,8 @@ TARGET = eagle
 #FLAVOR = release
 FLAVOR = debug
 
+SDK_BASE := /opt/esp8266-nonos-sdk
+
 #EXTRA_CCFLAGS += -u
 
 ifndef PDIR # {
@@ -26,8 +29,8 @@ SUBDIRS=    \
 
 endif # } PDIR
 
-APPDIR = .
-LDDIR = ../ld
+APPDIR := $(CURDIR)
+LDDIR = $(SDK_BASE)/ld
 
 CCFLAGS += -Os
 
@@ -49,7 +52,7 @@ COMPONENTS_eagle.app.v6 = \
     user/libuser.a
 
 LINKFLAGS_eagle.app.v6 = \
-    -L../lib        \
+    -L$(SDK_BASE)/lib        \
     -nostdlib   \
     -T$(LD_FILE)   \
     -Wl,--no-check-sections \
@@ -113,7 +116,7 @@ DDEFINES +=             \
 #
 
 INCLUDES := $(INCLUDES) -I $(PDIR)include
-PDIR := ../$(PDIR)
+PDIR := $(SDK_BASE)/
 sinclude $(PDIR)Makefile
 
 .PHONY: FORCE
